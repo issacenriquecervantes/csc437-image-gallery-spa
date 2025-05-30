@@ -1,0 +1,26 @@
+### Get all images
+# This is a comment
+GET http://localhost:3000/api/images
+
+### A second example.  Each request must be delimited by a triple hash
+POST http://localhost:3000/api/test
+Content-Type: application/json # Content-Type header is a must if you're sending JSON
+# Request body separated from headers by newline
+
+{ "a": 1, "b": 2 }
+
+### Example request that will result in an HTTP 404 Not Found error due to an invalid ObjectId.
+PUT http://localhost:3000/api/images/edit/anImage?newName=anImage
+Content-Type: application/json
+
+### Example request that will result in an HTTP 404 Not Found error.
+PUT http://localhost:3000/api/images/edit/123456789012345678901234?newName=anImage
+Content-Type: application/json
+
+### Example request that will result in an HTTP 400 Bad Request error due to a missing newName query.
+PUT http://localhost:3000/api/images/edit/6838ec6f9c05c42c2cf4548e
+Content-Type: application/json
+
+### Example request that will result in an HTTP 422 Unprocessable Entity error to do an excessively long newName.
+PUT http://localhost:3000/api/images/edit/6838ec6f9c05c42c2cf4548e?newName=AAAABBBBCCCCDDDDFFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPQQQQRRRRSSSSTTTTUUUUVVVVWWWWXXXXYYYYZZZZAAAABBBBCCCCDDDDFFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPQQQQRRRRSSSSTTTTUUUUVVVVWWWWXXXXYYYYZZZZ
+Content-Type: application/json

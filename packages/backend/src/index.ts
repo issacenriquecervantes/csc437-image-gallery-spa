@@ -4,6 +4,7 @@ import path from "path";
 import { ValidRoutes } from "./shared/ValidRoutes";
 import { connectMongo } from "./connectMondo";
 import { ImageProvider } from "./ImageProvider"
+import { registerImageRoutes } from "./routes/imageRoutes";
 
 dotenv.config(); // Read the .env file in the current working directory, and load values into process.env.
 const mongoClient = connectMongo();
@@ -14,20 +15,19 @@ const STATIC_DIR = process.env.STATIC_DIR || "public";
 
 const app = express();
 app.use(express.static(STATIC_DIR));
+app.use(express.json()) // for parsing application/json
+app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 
+app.post('/profile', (req, res, next) => {
+    console.log(req.body)
+    res.json(req.body)
+})
 
 app.get("/api/hello", (req: Request, res: Response) => {
     res.send("Hello, World");
 });
 
-app.get("/api/images", async (req: Request, res: Response) => {
-    try {
-        const images = await new ImageProvider(mongoClient).getAllImagesWithAuthors();
-        res.json(images);
-    } catch (err) {
-        res.status(500).json({ error: "Failed to fetch images" });
-    }
-});
+registerImageRoutes(app, new ImageProvider(mongoClient))
 
 app.get(Object.values(ValidRoutes) as string[], (req: Request, res: Response) => {
     res.sendFile(path.join(__dirname, "..", "..", "frontend", "dist", "index.html"));
