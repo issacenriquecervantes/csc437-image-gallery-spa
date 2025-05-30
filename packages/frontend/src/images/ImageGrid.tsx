@@ -1,6 +1,6 @@
 import { Link } from "react-router";
-import type { IImageData } from "../MockAppData.ts";
 import "./Images.css";
+import {type IImageData} from "../../../backend/src/ImageProvider.ts"
 
 interface IImageGridProps {
     images: IImageData[];
@@ -8,8 +8,8 @@ interface IImageGridProps {
 
 export function ImageGrid(props: IImageGridProps) {
     const imageElements = props.images.map((image) => (
-        <div key={image.id} className="ImageGrid-photo-container">
-            <Link to={"/images/" + image.id}><img src={image.src} alt={image.name} /></Link>
+        <div key={image._id.toString()} className="ImageGrid-photo-container">
+            <Link to={"/images/" + image._id}><img src={image.src} alt={image.name} /></Link>
         </div>
     ));
     return (
