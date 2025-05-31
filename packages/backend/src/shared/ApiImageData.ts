@@ -5,6 +5,13 @@ export interface IApiImageData {
     author: IApiUserData;
 }
 
+export interface IImageData {
+    _id: string;
+    src: string;
+    name: string;
+    author: { _id: string; username: string; email: string };
+}
+
 export interface IApiUserData {
     id: string,
     username: string

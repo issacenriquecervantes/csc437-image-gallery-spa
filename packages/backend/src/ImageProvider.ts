@@ -7,12 +7,7 @@ interface IImageDocument {
     authorId: ObjectId;
 }
 
-export interface IImageData {
-    _id: ObjectId;
-    src: string;
-    name: string;
-    author: { _id: string; username: string; email: string };
-}
+
 
 export class ImageProvider {
     private collection: Collection<IImageDocument>

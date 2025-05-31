@@ -1,4 +1,4 @@
-import {type IImageData} from "../../../backend/src/ImageProvider.ts"
+import {type IImageData} from "../../../backend/src/shared/ApiImageData.ts"
 import { ImageGrid } from "./ImageGrid.tsx";
 
 export function AllImages(props: {

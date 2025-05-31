@@ -1,4 +1,4 @@
-import  {type IImageData} from "../../../backend/src/ImageProvider.ts"
+import {type IImageData} from "../../../backend/src/shared/ApiImageData.ts"
 import { useParams } from "react-router";
 import { ImageNameEditor } from "./ImageNameEditor.tsx"
 

@@ -1,6 +1,6 @@
 import { Link } from "react-router";
 import "./Images.css";
-import {type IImageData} from "../../../backend/src/ImageProvider.ts"
+import {type IImageData} from "../../../backend/src/shared/ApiImageData.ts"
 
 interface IImageGridProps {
     images: IImageData[];

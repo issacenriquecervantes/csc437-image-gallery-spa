@@ -5,7 +5,7 @@ import { Routes, Route } from "react-router";
 import { ImageDetails } from "./images/ImageDetails.tsx";
 import { MainLayout } from "./MainLayout.tsx";
 import { useEffect, useState } from "react";
-import {type IImageData} from "../../backend/src/ImageProvider.ts"
+import {type IImageData} from "../../backend/src/shared/ApiImageData.ts"
 import { ValidRoutes } from "../../backend/src/shared/ValidRoutes.ts"
 
 function App() {
