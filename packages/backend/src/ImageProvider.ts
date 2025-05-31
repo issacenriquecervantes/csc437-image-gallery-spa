@@ -17,12 +17,12 @@ export interface IImageData {
 export class ImageProvider {
     private collection: Collection<IImageDocument>
 
-    constructor(private readonly mongoClient: MongoClient) {
+    constructor(mongoClient: MongoClient) {
         const collectionName = process.env.IMAGES_COLLECTION_NAME;
         if (!collectionName) {
             throw new Error("Missing IMAGES_COLLECTION_NAME from environment variables");
         }
-        this.collection = this.mongoClient.db().collection(collectionName);
+        this.collection = mongoClient.db().collection(collectionName);
     }
 
     async getAllImages(nameSubstring?: string) {
