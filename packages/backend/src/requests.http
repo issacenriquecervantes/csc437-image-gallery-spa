@@ -1,6 +1,8 @@
 ### Get all images
 # This is a comment
 GET http://localhost:3000/api/images
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNodW5reWxvdmVyMjMiLCJpYXQiOjE3NDk0MjAwMzMsImV4cCI6MTc0OTUwNjQzM30.dWhnYkGcFz3DVfTUXCSJO2H0RSAxrvcAqH4Ptr12iKc
+
 
 ### A second example.  Each request must be delimited by a triple hash
 POST http://localhost:3000/api/test
@@ -8,6 +10,10 @@ Content-Type: application/json # Content-Type header is a must if you're sending
 # Request body separated from headers by newline
 
 { "a": 1, "b": 2 }
+
+### Example request that will result in an HTTP 404 Not Found error due to an invalid ObjectId.
+GET http://localhost:3000/api/images?substring=sh
+Content-Type: application/json
 
 ### Example request that will result in an HTTP 404 Not Found error due to an invalid ObjectId.
 PUT http://localhost:3000/api/images/edit/anImage?newName=anImage
@@ -24,3 +30,22 @@ Content-Type: application/json
 ### Example request that will result in an HTTP 422 Unprocessable Entity error to do an excessively long newName.
 PUT http://localhost:3000/api/images/edit/6838ec6f9c05c42c2cf4548e?newName=AAAABBBBCCCCDDDDFFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPQQQQRRRRSSSSTTTTUUUUVVVVWWWWXXXXYYYYZZZZAAAABBBBCCCCDDDDFFFFGGGGHHHHIIIIJJJJKKKKLLLLMMMMNNNNOOOOPPPPQQQQRRRRSSSSTTTTUUUUVVVVWWWWXXXXYYYYZZZZ
 Content-Type: application/json
+
+### New user registration
+POST http://localhost:3000/auth/register
+Content-Type: application/json
+
+{ "username": "chunkylover23", "password": "password" }
+
+### User login verification
+POST http://localhost:3000/auth/login
+Content-Type: application/json
+
+{ "username": "chunkylover23", "password": "pass" }
+
+### 
+PATCH http://localhost:3000/api/images/edit/6838ec6f9c05c42c2cf4548e
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImNodW5reWxvdmVyMjMiLCJpYXQiOjE3NDk0MjAwMzMsImV4cCI6MTc0OTUwNjQzM30.dWhnYkGcFz3DVfTUXCSJO2H0RSAxrvcAqH4Ptr12iKc
+
+{ "newName": "apirefactoring"}

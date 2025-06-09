@@ -4,6 +4,7 @@ interface INameEditorProps {
     initialValue: string;
     imageId: string;
     onNameChange: (imageId: string, newName: string) => void;
+    token: string;
 }
 
 export function ImageNameEditor(props: INameEditorProps) {
@@ -15,15 +16,33 @@ export function ImageNameEditor(props: INameEditorProps) {
 
     async function handleSubmitPressed() {
         setLoading(true);
+        setError("");
         try {
-            const response = await fetch("/api/images");
+            const response = await fetch(
+                `/api/images/edit/${props.imageId}`,
+                {
+                    method: "PATCH",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${props.token}`,
+                    },
+                    body: JSON.stringify({ newName: input }),
+                }
+            );
             if (!response.ok) {
+                if (response.status === 403) {
+                    setError("You are not the owner of this image.");
+                } else {
+                    setError("Failed to update image name.");
+                }
                 throw new Error("Network response was not ok");
             }
-            props.onNameChange(props.imageId, input)
+            props.onNameChange(props.imageId, input);
             setIsEditingName(false);
         } catch (e) {
-            setError("Failed to update image name.");
+            // Only set error here if it's not already set
+            if (!error) setError("Failed to update image name.");
+            console.log(e);
         } finally {
             setLoading(false);
         }

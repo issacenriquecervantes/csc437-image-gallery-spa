@@ -4,63 +4,39 @@ interface IImageDocument {
     _id: ObjectId;
     src: string;
     name: string;
-    authorId: ObjectId;
+    authorId: string; // always a string username
 }
 
-
-
 export class ImageProvider {
-    private collection: Collection<IImageDocument>
+    private collection: Collection<IImageDocument>;
+    private db: ReturnType<MongoClient['db']>;
 
     constructor(mongoClient: MongoClient) {
         const collectionName = process.env.IMAGES_COLLECTION_NAME;
         if (!collectionName) {
             throw new Error("Missing IMAGES_COLLECTION_NAME from environment variables");
         }
-        this.collection = mongoClient.db().collection(collectionName);
+        this.db = mongoClient.db();
+        this.collection = this.db.collection(collectionName);
     }
 
     async getAllImages(nameSubstring?: string) {
-    // Build an aggregation pipeline to fetch images, optionally filtering by name substring,
-    // and denormalize the author field by joining with the users collection.
-    const pipeline: object[] = [];
-
-    // If a name substring is provided, filter images whose name contains the substring (case-insensitive)
-    if (nameSubstring) {
-        pipeline.push({
-            $match: { name: { $regex: nameSubstring, $options: "i" } }
-        });
-    }
-
-    // Join with the users collection to fetch author details, unwind the author array,
-    // and project only the required fields for the image and author.
-    pipeline.push(
-        {
-            $lookup: {
-                from: "users",
-                localField: "authorId",
-                foreignField: "_id",
-                as: "author",
-            },
-        },
-        { $unwind: "$author" },
-        {
-            $project: {
-                _id: 1,
-                src: 1,
-                name: 1,
-                author: {
-                    _id: 1,
-                    username: 1,
-                    email: 1,
-                },
-            },
+        const query: any = {};
+        if (nameSubstring) {
+            query.name = { $regex: nameSubstring, $options: "i" };
         }
-    );
+        const images = await this.collection.find(query).toArray();
 
-    // Execute the aggregation pipeline and return the resulting array of images with denormalized author data
-    return this.collection.aggregate(pipeline).toArray();
-}
+        // Attach a fake user document using the string authorId
+        return images.map(img => ({
+            ...img,
+            author: {
+                _id: img.authorId,
+                username: img.authorId,
+                email: `${img.authorId}@example.com`
+            }
+        }));
+    }
 
     async updateImageName(imageId: string, newName: string): Promise<number> {
         const _id = new ObjectId(imageId);
@@ -70,4 +46,34 @@ export class ImageProvider {
         );
         return result.matchedCount;
     }
+
+    async isUserAuthorOfImage(imageId: string, username: string): Promise<boolean> {
+        if (!imageId) return false;
+        const image = await this.collection.findOne({ _id: new ObjectId(imageId) });
+        if (!image) return false;
+        // authorId is always a string username
+        return image.authorId === username;
+    }
+
+    async createImage(image: { src: string; name: string; author: string }): Promise<void> {
+    const usersCollection = this.db.collection<{ _id: string; username: string; email: string }>("users");
+    let user = await usersCollection.findOne({ _id: image.author });
+    if (!user) {
+        // Insert a new user with a fake email if not found
+        const fakeUser = {
+            _id: image.author, // string username as _id
+            username: image.author,
+            email: `${image.author}@example.com`
+        };
+        await usersCollection.insertOne(fakeUser);
+        user = fakeUser;
+    }
+    // Insert the new image document with authorId as string username
+    await this.collection.insertOne({
+        src: image.src,
+        name: image.name,
+        authorId: user._id, // string username
+        _id: new ObjectId()
+    });
+}
 }

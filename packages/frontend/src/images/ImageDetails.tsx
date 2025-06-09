@@ -7,6 +7,7 @@ export function ImageDetails(props: {
     fetchingData: boolean;
     imageData: IImageData[];
     onNameChange: (imageId: string, newName: string) => void;
+    token: string;
 }) {
     const { imageID } = useParams();
     const image = props.imageData.find(image => image._id.toString() === imageID);
@@ -24,6 +25,7 @@ export function ImageDetails(props: {
                             initialValue={image.name}
                             imageId={image._id.toString()}
                             onNameChange={props.onNameChange}
+                            token={props.token}
                         />
                         <img className="ImageDetails-img" src={image.src} alt={image.name} />
                     </>
